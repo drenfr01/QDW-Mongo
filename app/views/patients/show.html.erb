@@ -1,1 +1,24 @@
-<%= @patient.full_name %>, <%= @patient.dob %>
+<% require 'json' %>
+<% require 'pp' %>
+<%= @patient.full_name %>
+<br>
+<%= @patient.dob %>
+<br>
+<table>
+<th> Orders </th>
+  <% @patient.orders.each do |order| %>
+      <tr><td><%= order.order_type %></td></tr>
+      <tr><td><%= order.date %></td></tr>
+      <tr><td><%= order.provider %></td></tr>
+  <% end %>
+</table>
+<br>
+<table>
+<th> Results </th>
+  <% @patient.results.each do |result| %>
+      <tr><td><%= result.result_type %></td></tr>
+      <tr><td><%= result.date %></td></tr>
+      <tr><td><%= result.provider %></td></tr>
+      <tr><td><%= result.quantity %></td></tr>
+  <% end %>
+</table>

@@ -9,6 +9,9 @@ class Patient
   many :results
   many :problems
   many :vitals  
+  
+  belongs_to :site
 
-  attr_accessible :full_name, :dob
+  attr_accessible :full_name, :dob, :pcp, 
+                  :orders, :results, :problems, :vitals
 end
