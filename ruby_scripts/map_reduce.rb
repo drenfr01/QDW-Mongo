@@ -1,6 +1,8 @@
 #Setup
 require 'mongo'
 
+include Mongo
+
 mongo_client = MongoClient.new("localhost",27017) 
 db = mongo_client.db("#myapp-development")
 patients_coll = db.collection("patients")
@@ -20,37 +22,43 @@ resultsMetric = "function() { " +
   "var flag = 0; " +
   "this.results.forEach(function(result) { " +
     "if (result.quantity <= threshold) { " +
-        "flag = 1; " +
-     "} " +
-  "}) " +
+       " flag = 1; " +
+     "}; " +
+  "}); " +
   "emit(this.pcp,flag); " +
 "}"
+map    = "function() { emit(this.author, {votes: this.votes}); }"
 
 #Measures
 #TODO: Reducers are not called on Single Document result sets
 standardReduce = "function(keyProvider, metricFlags) { " +
-  "reducedVal = {count: 0, sum: 0}; " +
+  "var reducedVal = {count: 0, sum: 0}; " +
   "for(i = 0; i < metricFlags.length; i++)  { " +
     "reducedVal.count += 1; reducedVal.sum += metricFlags[i]; " +
   "} " +
   "return reducedVal; " +
 "}"
 
+reduce = "function(key, values) { " +
+  "var sum = 0; " +
+  "values.forEach(function(doc) { " +
+  " sum += doc.votes; " +
+  "}); " +
+  "return {votes: sum}; " +
+"};"
 
 #Finalizers
-var PercentageFinalizer = function(key, reducedVal) { 
-  return reducedVal.sum / reducedVal.count 
-}
+percentageFinalizer = "function(key, reducedVal) { " +
+  "return reducedVal.sum / reducedVal.count " +
+"}"
 
 
 #Map Reduce Call 
-var A1C = function() {
-  db.patients.mapReduce(
-    ResultsMetric, 
-    StandardMeasure, 
-    { out: { merge: "map_reduce_example"}, 
-      query: {"results.result_type": "A1C"},
-      finalize: PercentageFinalizer,
-      scope: { threshold: 7 }
-    } 
-  )
+@results = patients_coll.map_reduce(resultsMetric, standardReduce,
+             :out => "map_reduce_example",
+             :query => {"results.result_type" => "A1C"},
+             :finalize => percentageFinalizer,
+             :scope => {"threshold" => 8}
+            )
+puts "Results..."
+puts @results.find().to_a

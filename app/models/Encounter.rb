@@ -6,3 +6,4 @@ class Encounter
   key :medical_ind, Boolean
   
   belongs_to :patient
+end
