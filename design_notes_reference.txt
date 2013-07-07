@@ -1,0 +1,15 @@
+Basics of model:
+
+Patient has references to:
+  Assessments
+  Problems
+  Orders
+  Results
+  Vitals
+
+These should all be part of a polymorphic class ideally, perhaps
+a Patient Attribute Class.
+
+The open question is, whether to make these all part of the same collection?
+  -> drawbacks to having 1, extremely populated collection?
+  -> any benefits to separating out orders, assessments, etc.?
