@@ -1,0 +1,3 @@
+1) Have MapReduce called through Ruby Driver rather than through bare Javascript
+2) Develop suite of 10 metrics/measures
+3) Insert substantial amounts of seed data
