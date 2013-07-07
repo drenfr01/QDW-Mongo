@@ -1,0 +1,22 @@
+Embedding has numerous advantages:
+  -data locality
+  -no need for expensive joins
+  -atomic updates
+
+There are several disadvantages:
+  -hard size of 16 MB
+  -growing documents can result in data fragementation / performance issues
+  (can mitigate this somewhat with pre-initialization in batch format)
+  -Mongo cannot search deeply nested data structures efficiently?
+
+Big consideration - can embedding the documents allow you to retrieve the 
+information you want correctly?
+  i.e. is there any situation where you would want to get a collection of 
+  orders distinct from there patients?
+
+First pass -> let's go with embedded but recognize that this severely limits
+flexibility. I.e. if we wanted to do analysis on orders made, for example,
+rather than looking at patients.
+
+Basically embedding everything in patients means we are always patient focused 
+rather than anything else
