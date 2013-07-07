@@ -6,4 +6,5 @@ class Result
   key :units, String
   key :date, Date
   key :provider, String
+
 end

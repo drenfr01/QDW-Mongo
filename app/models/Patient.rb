@@ -9,6 +9,7 @@ class Patient
   many :results
   many :problems
   many :vitals  
+  many :encounters
   
   belongs_to :site
 

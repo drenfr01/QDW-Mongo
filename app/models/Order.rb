@@ -4,4 +4,5 @@ class Order
     key :order_type, String
     key :date, Date
     key :provider, String
+
 end

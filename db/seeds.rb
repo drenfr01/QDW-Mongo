@@ -43,3 +43,24 @@ fred = Patient.create({
 })
 fred.save  
 
+#Format is to have Patient.create.save, and pull bunch of random variables
+#TODO: Move this seed data to bunch of csv files
+full_names = ['Mark', 'Mary', 'John', 'Joe', 'Dave', 'Cole', 'Cindy', 'Emily', 'Allison']
+
+providers = ['Dr. Kelso', 'Dr. Smith', 'Dr. Worthy', 'Dr. Cox', 'Dr. Turk', 'Dr. Reed', 'Dr. Dorian']
+
+order_types = ['Physical Exam', 'Colonoscopy', 'Flu Shot', 'Mental Health Counseling', 'Specialist']
+
+result_types = ['A1C', 'LDL', 'HDL', 'Triglycerides']
+
+a1c_range = {"lower" => 5, "upper" => 15}
+ldl_range = {"lower" => 80, "upper" => 200}
+hdl_range = {"lower" => 20, "upper" => 100}
+tri_range = {"lower" => 150, "upper" => 300}
+
+(0..100).each do |i|
+  patient = Patient.create()
+  full_name_number = rand(full_names.length)
+  patient.full_name = full_names(full_name_number)  
+  puts patient
+end

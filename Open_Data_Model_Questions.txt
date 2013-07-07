@@ -1,0 +1,149 @@
+Embedding vs Referencing is key question for data model:
+
+Embedding Advantages: 
+  1) Better locality of data -> avoiding super expensive random data seeks ond disks  2) atomic updates -> single document updates
+
+Embedding Disadvantages:
+  1) reduction of flexibility -> stuck with list of sub-documents in order, can't
+  limit, etc.
+  2) could have problems if you have high-arity in 1-to-many relationships (16 MB
+  document limit)
+  3) Large documents take up RAM, which means fewer documents in memory -> 
+  higher potential for page faults
+  4) Growing documents need to be copied, which significantly hampers update 
+  performance
+
+May want to go with mixed approach -> store key information about sub-document in 
+larger document, then create reference to other collectionf for more details
+
+Consider polymorphic collections -> storing similar documents in same collection
+, akin to inheritance hierarchy
+
+Can also have batch schema migration for large databases, where slowly go back
+and add field to all documents but until that's done handle 2 cases in application
+code
+
+Distrbuted RDMS systems (on multiple physical servers) have to use slow 2 phase 
+commit process where each server executes prepare step, waits for all others, then 
+makes updates. 
+
+Mongo does not have atomic multi-document update operations -> so oftentimes we 
+need to use document embedding and other strategies to ensure transactional
+guarentees.
+
+Chapter 4: Business Intelligence Use Case
+
+
+Shard Key -> ideally:
+  1) insertions are balanced between shards
+  2) most queries can be routed to subset of shards to be satisfied
+  
+    Timestamp -> generally not great idea because most documents will be inserted
+    at one shard
+    Random hash key -> may not be good because queries must be run in parallel
+    on all shards (unless include shard key)?
+
+Best option may be to look at values that are evenly distributed across all 
+documents
+
+Basically have to analyze insertions and queries from own application
+
+Capped collections -> have fixed size, and drop old data automatically when 
+when inserting data after reaching cap
+
+Alternatively, can use TTL (time to live) index that periodically drops old 
+documents from collection
+
+Pre-Aggregated Reports (Real-Time Analytics):
+
+Assumptions)
+  Require up to the minute, or second, data
+  Queries for ranges of data (by time?) must be as fast as possible
+  
+Avoid following performance killers:
+  1) Individual documents growing significantly after they are created
+    documente growth forces MongoDB to move documents on disk
+  2) Colleciton scans -> scanning large amounts of data
+  3) Documents with large number (hundreds) of keys
+
+May want to store number of aggregate values in single document
+
+May want to pre-allocate documents with fields holding temp values, like 0, 
+before documents are actually used (prevents documents from growing and 
+never need to be moved)
+
+Consider building hierarchy into documents to updates can "skip" forward or 
+backward by chunks
+
+Hierarchical Aggregation:
+  Solution Overview: Aggregate event data into statistics at finest 
+  required granularity. Then use this aggregate data to generate next level up
+  recursively
+
+Key to incremental reduction is having map function with same outputs so you can
+reuse reduce/finalize functions. 
+The input to each higher level of map/reduce is the output of the prior level,
+so the only difference tends to be the keys
+
+Chapter 5 Ecommerce:
+
+Product Catalog: several different relational approaches to solving products
+of various types
+
+Relational Models:
+  1) Concrete Table Inheritance
+    Basically have each product type be its own table
+    Disadvantage -> Limited Flexibility:
+      1) Must create new table for every new category of products
+      2) Must explicitly tailor all queries for exact type of product 
+
+  2) Single Table Inheritance
+    Use single table for all product categories and add new columns any time
+    you need to store data regarding a new type of product
+      More flexible than previous approach, but also requires more space
+      Also suffers from lack of flexibility in that new types of products
+      require Alter Table operations
+
+  3) Multiple-table inheritance
+    Represent common attributes in a generic "product" table with some variations
+    in individual category product tables 
+      This is more space efficient thatn single table inheritance and more 
+      flexible than concrete table inheritance, but does require expensive JOINs
+
+  4) Entity Attribute Values
+    Create meta-model for product data, i.e. maintaining table with 3 columns 
+      (entity_id, attribute_id, and value) and these triples describe each product
+      Schema is completely flexible, any entity can have any set of attributes
+      New product categories do not require any changes to data model in database
+      Non-trivial queries require large numbers of JOIN operations  
+
+  5) The Screw it Approach
+    Serialize all product data into a BLOB column
+    Schema is simple, but sorting and filtering on data embedded in BLOB 
+    practically impossible
+
+MongoDB answer -> use single MongoDB collection to store all product data, but
+  Mongo's flexible dynamic schema means that the individual documents need not
+  conform to the same rigid schema
+
+Chapter 6: CMS (specifically Comment Management)
+  3 Basic Patterns for storing comments:
+    1) Store each comment in its own document
+      Provides greatest flexibility at the expense of some additional applicaition
+      level complexity
+    2) Embed all comments in the "parent" document
+      Greate possible performance at expense of flexibliity
+      The structure of the comments in the document controls the display format
+      Number of comments strictly limited by MongoDB's document size limit
+    3) Store comments separately from teh "parent" but grouped with each other
+      Hybrid design provides flexibility than the pure embedding approach, 
+      but almost the same performance
+
+
+Chapter 9: Online Game
+  MongoDB does not allow you to push as much logic to database due to more limited
+  programming capabilities in the server. However, moving more of the workload 
+  to the database carries an important benefit-> application servers are much easier  to scale than database servers. May be some benefits where data locality/indexes
+  can make operations on MongoDB more efficent.
+  Rule of Thumb - consider whether there's significant performance advantage
+  to keeping calculation on MongoDB server, if not, move it to application layer

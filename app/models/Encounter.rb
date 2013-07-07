@@ -1,9 +1,8 @@
-class Problem
+class Encounter
   include MongoMapper::EmbeddedDocument
-  
-  key :problem_name, String
-  key :icd9, String
+
   key :date, Date
   key :provider, String
-
-end
+  key :medical_ind, Boolean
+  
+  belongs_to :patient
