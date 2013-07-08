@@ -1,3 +1,5 @@
+require "../ruby_scripts/create_random_data.rb"
+
 bob = Patient.create({
   :full_name => "Bob",
   :pcp => "Dr. Smith",
