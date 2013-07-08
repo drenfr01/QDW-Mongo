@@ -20,3 +20,10 @@ rather than looking at patients.
 
 Basically embedding everything in patients means we are always patient focused 
 rather than anything else
+
+Metrics/Measures:
+  Could make measure description part of key, or could have each measure be part 
+  of a separate collection
+  
+  Furthemore -> could store each measure attached to one provider, so see 
+  at a glance how a doctor stacks up
