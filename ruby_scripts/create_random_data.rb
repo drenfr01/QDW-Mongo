@@ -72,7 +72,5 @@ upper_date_bound = Time.now
                   :result_date => result_date
                  }
   end
-  puts orders
-  puts results
 end
 
