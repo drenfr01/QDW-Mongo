@@ -27,3 +27,6 @@ Metrics/Measures:
   
   Furthemore -> could store each measure attached to one provider, so see 
   at a glance how a doctor stacks up
+
+  I'm an idiot...WAY more efficient to access each patient document once 
+  and emit all relevant information. Key would become then provider - measure
