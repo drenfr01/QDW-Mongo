@@ -20,7 +20,7 @@ ranges = {:a1c => {:lower => 5, :upper => 15},
           :tri => {:lower => 150, :upper => 300}
         } 
 
-number_of_patients = 1
+number_of_patients = 100
 number_of_orders = rand(10) 
 number_of_results = rand(10)
 
@@ -30,7 +30,7 @@ upper_dob_bound = Time.new(1989,2,10)
 lower_date_bound = Time.new(2009,3,4)
 upper_date_bound = Time.now
 
-(0..number_of_patients).each do |i|
+(1..number_of_patients).each do |i|
   #Demographics
   full_name = full_names[rand(full_names.length)]
   provider = providers[rand(providers.length)]

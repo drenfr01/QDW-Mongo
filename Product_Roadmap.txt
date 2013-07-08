@@ -2,6 +2,7 @@
   DONE
 2) Insert substantial amounts of seed data
   a) Create random seed data generator
+    DONE
   b) Tweak random seed data generator to desired settings
   c) Ensure metrics work as expected on 10/12 patients
   d) Try inserting large amounts of patients

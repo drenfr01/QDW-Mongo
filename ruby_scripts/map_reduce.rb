@@ -27,7 +27,6 @@ resultsMetric = "function() { " +
   "}); " +
   "emit(this.pcp,flag); " +
 "}"
-map    = "function() { emit(this.author, {votes: this.votes}); }"
 
 #Measures
 #TODO: Reducers are not called on Single Document result sets
@@ -39,14 +38,6 @@ standardReduce = "function(keyProvider, metricFlags) { " +
   "return reducedVal; " +
 "}"
 
-reduce = "function(key, values) { " +
-  "var sum = 0; " +
-  "values.forEach(function(doc) { " +
-  " sum += doc.votes; " +
-  "}); " +
-  "return {votes: sum}; " +
-"};"
-
 #Finalizers
 percentageFinalizer = "function(key, reducedVal) { " +
   "return reducedVal.sum / reducedVal.count " +
@@ -54,11 +45,16 @@ percentageFinalizer = "function(key, reducedVal) { " +
 
 
 #Map Reduce Call 
+#TODO: Deal with case sensitivity issue for query
+output_collection = "metrics"
+selection_criteria = "results.result_type"
+selection_type = "a1c"
+threshold_value = 8
 @results = patients_coll.map_reduce(resultsMetric, standardReduce,
-             :out => "map_reduce_example",
-             :query => {"results.result_type" => "A1C"},
+             :out => output_collection, 
+             :query => {selection_criteria => selection_type},
              :finalize => percentageFinalizer,
-             :scope => {"threshold" => 8}
+             :scope => {"threshold" => threshold_value}
             )
 puts "Results..."
 puts @results.find().to_a
