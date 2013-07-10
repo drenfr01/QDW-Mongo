@@ -25,7 +25,8 @@ resultsMetric = "function() { " +
        " flag = 1; " +
      "}; " +
   "}); " +
-  "emit(this.pcp,flag); " +
+  "var key = {pcp : this.pcp, type : type}; " +
+  "emit(key,flag); " +
 "}"
 
 #Measures
@@ -54,7 +55,8 @@ threshold_value = 8
              :out => output_collection, 
              :query => {selection_criteria => selection_type},
              :finalize => percentageFinalizer,
-             :scope => {"threshold" => threshold_value}
+             :scope => {"threshold" => threshold_value,
+                        "type" => selection_type}
             )
 puts "Results..."
 puts @results.find().to_a
