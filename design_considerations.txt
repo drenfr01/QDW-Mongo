@@ -30,3 +30,13 @@ Metrics/Measures:
 
   I'm an idiot...WAY more efficient to access each patient document once 
   and emit all relevant information. Key would become then provider - measure
+    This is done by emiting array, i.e. emit({ pcp: x.provider, category: "a1c"}, 
+                                              value})
+  Unfortuantely this comes at the cost of flexibility (i.e. hard to do diabetes ldl
+  )
+
+Probably best way to do this is to have:
+1) Patient document with latest information for each result/order/maintenance item
+    may also want some summary information 
+2) will have references to batches of orders/results/maintenance items
+3) historical orders/results/maintenance items will live in a collection
